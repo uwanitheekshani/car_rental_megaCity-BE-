@@ -5,16 +5,19 @@ package org.uwani.mega.megacity.service.impl;
 import org.uwani.mega.megacity.dao.BookingDAO;
 import org.uwani.mega.megacity.dto.BookingDTO;
 import org.uwani.mega.megacity.entity.Booking;
+import org.uwani.mega.megacity.entity.User;
 import org.uwani.mega.megacity.service.BookingService;
+import org.uwani.mega.megacity.service.UserService;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class BookingServiceImpl implements BookingService {
     private BookingDAO bookingDAO = new BookingDAO();
-
+    private UserService userService = new UserServiceImpl();
     // Convert DTO to Entity
     // Convert DTO to Entity
     private Booking toEntity(BookingDTO dto) throws ParseException {
@@ -28,7 +31,8 @@ public class BookingServiceImpl implements BookingService {
                 dto.getTotalAmount(),
                 dto.getStatus(),
                 new Date(System.currentTimeMillis()),  // Set CreatedAt
-                new Date(System.currentTimeMillis())   // Set UpdatedAt
+                new Date(System.currentTimeMillis()),   // Set UpdatedAt
+                dto.getDriverId()
         );
     }
 
@@ -36,9 +40,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public boolean createBooking(BookingDTO bookingDTO) {
         try {
+            User user =userService.getDriverUsers();
+            bookingDTO.setDriverId(user.getId());
             Booking booking = toEntity(bookingDTO);
             return bookingDAO.createBooking(booking);
-        } catch (ParseException e) {
+        } catch (ParseException | SQLException e) {
             e.printStackTrace();
             return false;
         }

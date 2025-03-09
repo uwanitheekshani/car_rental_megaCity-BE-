@@ -49,7 +49,7 @@ public class CarServiceImpl implements CarService {
         car.setId(carDTO.getId());
         car.setName(carDTO.getName());
         car.setModel(carDTO.getModel());
-        car.getPlate_number();
+        car.setPlate_number(carDTO.getPlate_number());
         car.setYear(carDTO.getYear());
         car.setStatus(carDTO.getStatus());
 

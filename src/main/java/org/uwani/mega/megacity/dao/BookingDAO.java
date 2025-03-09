@@ -14,7 +14,7 @@ import java.util.List;
 public class BookingDAO  {
     // CREATE Booking
     public boolean createBooking(Booking booking) {
-        String sql = "INSERT INTO bookings (user_id, car_id, start_date, end_date, total_amount, status) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO bookings (user_id, car_id, start_date, end_date, total_amount, status, driver_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, booking.getUserId());
@@ -23,6 +23,7 @@ public class BookingDAO  {
             stmt.setDate(4, new java.sql.Date(booking.getEndDate().getTime()));
             stmt.setDouble(5, booking.getTotalAmount());
             stmt.setString(6, booking.getStatus());
+            stmt.setInt(7, booking.getDriverId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

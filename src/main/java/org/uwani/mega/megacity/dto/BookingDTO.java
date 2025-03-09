@@ -1,5 +1,9 @@
 package org.uwani.mega.megacity.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class BookingDTO {
     private int id;
     private int userId;
@@ -10,6 +14,7 @@ public class BookingDTO {
     private String status;
     private String createdAt; // Change to String
     private String updatedAt; // Change to String
+    private int driverId;
 
     @Override
     public String toString() {
@@ -68,4 +73,11 @@ public class BookingDTO {
 
     public String getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
+    public int getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(int driverId) {
+        this.driverId = driverId;
+    }
 }

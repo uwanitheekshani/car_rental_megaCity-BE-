@@ -10,11 +10,11 @@ import java.util.List;
 
 public class CarDAO {
 
-    private static final String ADD_CAR_SQL = "INSERT INTO cars (name, model, plate_number, year, status) VALUES (?, ?, ?, ?, ?)";
-    private static final String GET_CAR_BY_ID_SQL = "SELECT * FROM cars WHERE id = ?";
-    private static final String GET_ALL_CARS_SQL = "SELECT * FROM cars";
-    private static final String UPDATE_CAR_SQL = "UPDATE cars SET name = ?, model = ?, plate_number = ?, year = ?, status = ? WHERE id = ?";
-    private static final String DELETE_CAR_SQL = "DELETE FROM cars WHERE id = ?";
+    private static final String ADD_CAR_SQL = "INSERT INTO car (name, model, plate_number, year, status) VALUES (?, ?, ?, ?, ?)";
+    private static final String GET_CAR_BY_ID_SQL = "SELECT * FROM car WHERE id = ?";
+    private static final String GET_ALL_CARS_SQL = "SELECT * FROM car";
+    private static final String UPDATE_CAR_SQL = "UPDATE car SET name = ?, model = ?, plate_number = ?, year = ?, status = ? WHERE id = ?";
+    private static final String DELETE_CAR_SQL = "DELETE FROM car WHERE id = ?";
 
     // Method to add a new car
     public void addCar(Car car) {
@@ -110,7 +110,7 @@ public class CarDAO {
     }
 
     public void updateCarStatus(int carId, String status) throws SQLException {
-        String sql = "UPDATE cars SET status = ? WHERE id = ?";
+        String sql = "UPDATE car SET status = ? WHERE id = ?";
         try (Connection conn = DBConfig.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);

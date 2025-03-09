@@ -16,7 +16,7 @@ public class UserManageDAO {
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM users";
+        String sql = "SELECT * FROM user";
 
         try (Connection conn = DBConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -43,7 +43,7 @@ public class UserManageDAO {
     // Get users by email
     public List<User> getUsersByEmail(String email) {
         List<User> users = new ArrayList<>();
-        String query = "SELECT * FROM users WHERE email = ?";
+        String query = "SELECT * FROM user WHERE email = ?";
         try (Connection connection = DBConfig.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
@@ -64,7 +64,7 @@ public class UserManageDAO {
     // Get users by role
     public List<User> getUsersByRole(String role) {
         List<User> users = new ArrayList<>();
-        String query = "SELECT * FROM users WHERE role = ?";
+        String query = "SELECT * FROM user WHERE role = ?";
         try (Connection connection = DBConfig.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
@@ -84,7 +84,7 @@ public class UserManageDAO {
 
     // Update user details
     public boolean updateUser(int userId, User updatedUser) {
-        String query = "UPDATE users SET username = ?, password = ?, email = ?, phone = ?, role = ? WHERE id = ?";
+        String query = "UPDATE user SET username = ?, password = ?, email = ?, phone = ?, role = ? WHERE id = ?";
         try (Connection connection = DBConfig.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
@@ -106,7 +106,7 @@ public class UserManageDAO {
 
     // Delete user by ID
     public boolean deleteUser(int userId) {
-        String query = "DELETE FROM users WHERE id = ?";
+        String query = "DELETE FROM user WHERE id = ?";
         try (Connection connection = DBConfig.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 

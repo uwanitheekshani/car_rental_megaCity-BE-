@@ -5,6 +5,8 @@ import jakarta.mail.MessagingException;
 import org.uwani.mega.megacity.dto.ProfileImageDTO;
 import org.uwani.mega.megacity.entity.User;
 
+import java.sql.SQLException;
+
 
 public interface UserService {
     boolean registerUser(User user);
@@ -20,4 +22,5 @@ public interface UserService {
     String forgotPassword(String email)throws MessagingException;
     boolean verifyOtp(String email, String otpCode);
     boolean changePassword(String email, String newPassword);
+    User getDriverUsers() throws SQLException;
 }

@@ -1,8 +1,9 @@
 package org.uwani.mega.megacity.servlet;
 
 import com.google.gson.Gson;
+//import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
+//import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,16 +16,17 @@ import org.uwani.mega.megacity.service.ImageService;
 import org.uwani.mega.megacity.service.impl.CarServiceImpl;
 import org.uwani.mega.megacity.service.impl.ImageServiceImpl;
 
-import java.io.File;
+//import java.io.BufferedReader;
+//import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.List;
 
 @WebServlet("/uploadCarWithImage/*")
-@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
-        maxFileSize = 1024 * 1024 * 10,    // 10MB
-        maxRequestSize = 1024 * 1024 * 50) // 50MB
+//@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+//        maxFileSize = 1024 * 1024 * 10,    // 10MB
+//        maxRequestSize = 1024 * 1024 * 50) // 50MB
 public class CarImageServlet extends HttpServlet {
     private CarService carService = new CarServiceImpl();
     private ImageService imageService = new ImageServiceImpl();
@@ -72,6 +74,7 @@ public class CarImageServlet extends HttpServlet {
         int year = Integer.parseInt(request.getParameter("year"));
         String status = request.getParameter("status");
 
+
         // Create CarDTO object
         CarDTO carDTO = new CarDTO(0, name, model, plate_number, year, status);
 
@@ -80,27 +83,27 @@ public class CarImageServlet extends HttpServlet {
         int carId = carDTO.getId();  // Get the ID of the newly added car
 
         // Handle image upload if present
-        Part filePart = request.getPart("image");
-        if (filePart != null && filePart.getSize() > 0) {
-            String fileName = Path.of(filePart.getSubmittedFileName()).getFileName().toString();
-            String filePath = getServletContext().getRealPath("/") + "uploads" + File.separator + fileName;
-
-            // Ensure uploads directory exists
-            File uploadsDir = new File(getServletContext().getRealPath("/") + "uploads");
-            if (!uploadsDir.exists()) {
-                uploadsDir.mkdirs();
-            }
-
-            // Write the file to disk
-            filePart.write(filePath);
-
-            // Create ImageDTO object
-            Timestamp createdAt = new Timestamp(System.currentTimeMillis());
-            ImageDTO imageDTO = new ImageDTO(0, fileName, filePath, carId, createdAt);
-
-            // Call service to add the image
-            imageService.addImage(imageDTO);
-        }
+        // Part filePart = request.getPart("image");
+//        if (filePart != null && filePart.getSize() > 0) {
+//            String fileName = Path.of(filePart.getSubmittedFileName()).getFileName().toString();
+//            String filePath = getServletContext().getRealPath("/") + "uploads" + File.separator + fileName;
+//
+//            // Ensure uploads directory exists
+//            File uploadsDir = new File(getServletContext().getRealPath("/") + "uploads");
+//            if (!uploadsDir.exists()) {
+//                uploadsDir.mkdirs();
+//            }
+//
+//            // Write the file to disk
+//            filePart.write(filePath);
+//
+//            // Create ImageDTO object
+//            Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+//            ImageDTO imageDTO = new ImageDTO(0, fileName, filePath, carId, createdAt);
+//
+//            // Call service to add the image
+//            imageService.addImage(imageDTO);
+//        }
 
         sendSuccessResponse(response, "Car and Image added successfully.");
     }
@@ -147,31 +150,12 @@ public class CarImageServlet extends HttpServlet {
             carDTO.setYear(year);  // Set the parsed year
             carDTO.setStatus(request.getParameter("status"));
 
+            System.out.println("////name :"+carDTO.getName());
+
             // Call service to update car
             carService.updateCar(carDTO);
 
-            // Handle image update (optional)
-            Part filePart = request.getPart("image");
-            if (filePart != null && filePart.getSize() > 0) {
-                String fileName = Path.of(filePart.getSubmittedFileName()).getFileName().toString();
-                String filePath = getServletContext().getRealPath("/") + "uploads" + File.separator + fileName;
 
-                // Ensure uploads directory exists
-                File uploadsDir = new File(getServletContext().getRealPath("/") + "uploads");
-                if (!uploadsDir.exists()) {
-                    uploadsDir.mkdirs();
-                }
-
-                // Write the file to disk
-                filePart.write(filePath);
-
-                // Create ImageDTO to add the new image
-                Timestamp createdAt = new Timestamp(System.currentTimeMillis());
-                ImageDTO imageDTO = new ImageDTO(0, fileName, filePath, carId, createdAt);
-
-                // Call service to add the new image
-                imageService.addImage(imageDTO);
-            }
 
             sendSuccessResponse(response, "Car updated successfully.");
         } else {

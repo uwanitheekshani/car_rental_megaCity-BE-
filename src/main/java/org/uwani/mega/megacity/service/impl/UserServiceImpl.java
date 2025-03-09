@@ -11,6 +11,8 @@ import org.uwani.mega.megacity.service.EmailService;
 import org.uwani.mega.megacity.service.UserService;
 import org.uwani.mega.megacity.entity.OTP;
 
+import java.sql.SQLException;
+
 
 public class UserServiceImpl implements UserService {
     private final UserDAO userDAO = new UserDAO();
@@ -130,5 +132,14 @@ public class UserServiceImpl implements UserService {
         }
 
         return passwordUpdated;
+    }
+
+    @Override
+    public User getDriverUsers() throws SQLException {
+        User user = userDAO.getRandomDriver();  // Retrieve profile image from DB
+        if (user != null) {
+            return user;
+        }
+        return null;
     }
 }
