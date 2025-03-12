@@ -14,4 +14,5 @@ public interface BookingService {
     boolean updateBooking(int id, BookingDTO bookingDTO);
     boolean deleteBooking(int id);
     boolean updateBookingStatus(int id, String status);
+    List<Booking> getAllBookings(int id);
 }

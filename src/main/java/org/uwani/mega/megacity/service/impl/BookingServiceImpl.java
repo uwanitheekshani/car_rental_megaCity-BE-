@@ -123,4 +123,9 @@ public class BookingServiceImpl implements BookingService {
         }
         return false;
     }
+
+    @Override
+    public List<Booking> getAllBookings(int id) {
+        return bookingDAO.getAllBookingsById(id);
+    }
 }

@@ -115,4 +115,37 @@ public class BookingDAO  {
         return bookings;
     }
 
+    public List<Booking> getAllBookingsById(int user_id) {
+        List<Booking> bookings = new ArrayList<>();
+        String sql = "SELECT * FROM bookings WHERE driver_id = ?";
+
+        try (Connection conn = DBConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, user_id); // ✅ Correctly placed before execution
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    bookings.add(new Booking(
+                            rs.getInt("id"),
+                            rs.getInt("user_id"),
+                            rs.getInt("car_id"),
+                            rs.getDate("start_date"),  // ✅ Convert to LocalDate
+                            rs.getDate("end_date"),    // ✅ Convert to LocalDate
+                            rs.getDouble("total_amount"),
+                            rs.getString("status"),
+                            rs.getTimestamp("created_at"), // ✅ Convert to LocalDateTime
+                            rs.getTimestamp("updated_at")  // ✅ Convert to LocalDateTime
+                    ));
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("❌ Error fetching bookings for user ID: " + user_id);
+            e.printStackTrace();
+        }
+
+        return bookings;
+    }
+
 }
