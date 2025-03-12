@@ -53,11 +53,36 @@ public class BookingController extends HttpServlet {
     }
 
     // Handle UPDATE Booking (PUT)
+//    @Override
+//    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        // Extracting the ID from the URL path
+//        String[] urlParts = req.getRequestURI().split("/");  // Split the URL by "/"
+//        String idParam = urlParts[urlParts.length - 1];  // The last part should be the ID
+//
+//        if (idParam == null || idParam.isEmpty()) {
+//            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Booking ID is required");
+//            return;
+//        }
+//
+//        try {
+//            int id = Integer.parseInt(idParam);  // Parse the ID to an integer
+//            BufferedReader reader = req.getReader();
+//            BookingDTO bookingDTO = gson.fromJson(reader, BookingDTO.class);
+//
+//            boolean success = bookingService.updateBooking(id, bookingDTO);
+//
+//            resp.setContentType("application/json");
+//            resp.setCharacterEncoding("UTF-8");
+//            resp.getWriter().write(gson.toJson(success ? "Booking Updated Successfully" : "Failed to Update Booking"));
+//        } catch (NumberFormatException e) {
+//            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Booking ID");
+//        }
+//    }
+
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Extracting the ID from the URL path
-        String[] urlParts = req.getRequestURI().split("/");  // Split the URL by "/"
-        String idParam = urlParts[urlParts.length - 1];  // The last part should be the ID
+        String action = req.getParameter("action");
+        String idParam = req.getParameter("id");
 
         if (idParam == null || idParam.isEmpty()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Booking ID is required");
@@ -65,15 +90,41 @@ public class BookingController extends HttpServlet {
         }
 
         try {
-            int id = Integer.parseInt(idParam);  // Parse the ID to an integer
-            BufferedReader reader = req.getReader();
-            BookingDTO bookingDTO = gson.fromJson(reader, BookingDTO.class);
+            int id = Integer.parseInt(idParam);
 
-            boolean success = bookingService.updateBooking(id, bookingDTO);
+            if (action == null || action.isEmpty()) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Action is required");
+                return;
+            }
+
+            boolean success = false;
+
+            switch (action) {
+                case "updateStatus":
+                    String status = req.getParameter("status");
+                    if (status == null || status.isEmpty()) {
+                        resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Status is required");
+                        return;
+                    }
+                    success = bookingService.updateBookingStatus(id, status);
+                    resp.getWriter().write(gson.toJson(success ? "Booking Status Updated Successfully" : "Failed to Update Booking Status"));
+                    break;
+
+                case "updateBooking":
+                    BufferedReader reader = req.getReader();
+                    BookingDTO bookingDTO = gson.fromJson(reader, BookingDTO.class);
+                    success = bookingService.updateBooking(id, bookingDTO);
+                    resp.getWriter().write(gson.toJson(success ? "Booking Updated Successfully" : "Failed to Update Booking"));
+                    break;
+
+                default:
+                    resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
+                    break;
+            }
 
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
-            resp.getWriter().write(gson.toJson(success ? "Booking Updated Successfully" : "Failed to Update Booking"));
+
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Booking ID");
         }

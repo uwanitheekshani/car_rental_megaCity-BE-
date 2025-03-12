@@ -15,8 +15,49 @@ public class PaymentDAOImpl implements PaymentDAO {
     private static final String UPDATE_PAYMENT = "UPDATE payments SET payment_status = ? WHERE id = ?";
     private static final String DELETE_PAYMENT = "DELETE FROM payments WHERE id = ?";
 
+//    @Override
+//    public void createPayment(Payment payment) {
+//        // Check if the booking_id exists in the bookings table
+//        boolean bookingExists = false;
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement checkStmt = conn.prepareStatement("SELECT 1 FROM bookings WHERE id = ?")) {
+//
+//            checkStmt.setInt(1, payment.getBookingId());
+//            ResultSet rs = checkStmt.executeQuery();
+//
+//            if (rs.next()) {
+//                bookingExists = true; // Booking exists
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        if (!bookingExists) {
+//            throw new IllegalArgumentException("Invalid booking ID: " + payment.getBookingId());
+//        }
+//
+//        // Proceed with inserting the payment if the booking_id is valid
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(INSERT_PAYMENT, Statement.RETURN_GENERATED_KEYS)) {
+//
+//            stmt.setInt(1, payment.getBookingId());
+//            stmt.setInt(2, payment.getUserId());
+//            stmt.setDouble(3, payment.getPaymentAmount());
+//            stmt.setString(4, payment.getCurrency());
+//            stmt.setString(5, payment.getPaymentMethod());
+//            stmt.setString(6, payment.getPaymentStatus());
+//            stmt.setString(7, payment.getTransactionId());
+//            stmt.setString(8, payment.getRemarks());
+//
+//            stmt.executeUpdate();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     @Override
-    public void createPayment(Payment payment) {
+    public boolean createPayment(Payment payment) {
         // Check if the booking_id exists in the bookings table
         boolean bookingExists = false;
         try (Connection conn = DBConfig.getConnection();
@@ -31,6 +72,7 @@ public class PaymentDAOImpl implements PaymentDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return false; // Return false if there's an error checking booking existence
         }
 
         if (!bookingExists) {
@@ -50,9 +92,12 @@ public class PaymentDAOImpl implements PaymentDAO {
             stmt.setString(7, payment.getTransactionId());
             stmt.setString(8, payment.getRemarks());
 
-            stmt.executeUpdate();
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0; // Return true if insertion was successful
+
         } catch (SQLException e) {
             e.printStackTrace();
+            return false; // Return false if insertion fails
         }
     }
 

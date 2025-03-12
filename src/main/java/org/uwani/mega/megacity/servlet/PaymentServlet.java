@@ -53,23 +53,54 @@ public class PaymentServlet extends HttpServlet {
         }
     }
 
+//    @Override
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        response.setContentType("application/json");
+//
+//        String paymentId = request.getParameter("id");
+//        if (paymentId != null) {
+//            try {
+//                int id = Integer.parseInt(paymentId);
+//                Payment payment = paymentService.getPaymentById(id);
+//                response.getWriter().write(gson.toJson(payment));
+//            } catch (NumberFormatException e) {
+//                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+//                response.getWriter().write(gson.toJson("Invalid payment ID"));
+//            }
+//        } else {
+//            List<Payment> payments = paymentService.getAllPayments();
+//            response.getWriter().write(gson.toJson(payments));
+//        }
+//    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
 
-        String paymentId = request.getParameter("id");
-        if (paymentId != null) {
-            try {
-                int id = Integer.parseInt(paymentId);
-                Payment payment = paymentService.getPaymentById(id);
-                response.getWriter().write(gson.toJson(payment));
-            } catch (NumberFormatException e) {
+        // Retrieve the action parameter
+        String action = request.getParameter("action");
+
+        if ("getById".equals(action)) {
+            String paymentId = request.getParameter("id");
+            if (paymentId != null) {
+                try {
+                    int id = Integer.parseInt(paymentId);
+                    Payment payment = paymentService.getPaymentById(id);
+                    response.getWriter().write(gson.toJson(payment));
+                } catch (NumberFormatException e) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.getWriter().write(gson.toJson("Invalid payment ID"));
+                }
+            } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write(gson.toJson("Invalid payment ID"));
+                response.getWriter().write(gson.toJson("Payment ID is required"));
             }
-        } else {
+        } else if ("getAll".equals(action)) {
             List<Payment> payments = paymentService.getAllPayments();
             response.getWriter().write(gson.toJson(payments));
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write(gson.toJson("Invalid action"));
         }
     }
 

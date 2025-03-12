@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CarUserFilteringDAO {
-    private static final String GET_ALL_CARS_SQL = "SELECT id, name, model, plate_number, year, status FROM cars";
-    private static final String GET_CAR_BY_ID_SQL = "SELECT id, name, model, plate_number, year, status FROM cars WHERE id = ?";
-    private static final String FILTER_CARS_BY_STATUS_SQL = "SELECT id, name, model, plate_number, year, status FROM cars WHERE status = ?";
-    private static final String FILTER_CARS_BY_MODEL_SQL = "SELECT id, name, model, plate_number, year, status FROM cars WHERE model = ?";
-    private static final String FILTER_CARS_BY_STATUS_AND_MODEL_SQL = "SELECT id, name, model, plate_number, year, status FROM cars WHERE status = ? AND model = ?"; // New query
+    private static final String GET_ALL_CARS_SQL = "SELECT id, name, model, plate_number, year, status FROM car";
+    private static final String GET_CAR_BY_ID_SQL = "SELECT id, name, model, plate_number, year, status FROM car WHERE id = ?";
+    private static final String FILTER_CARS_BY_STATUS_SQL = "SELECT id, name, model, plate_number, year, status FROM car WHERE status = ?";
+    private static final String FILTER_CARS_BY_MODEL_SQL = "SELECT id, name, model, plate_number, year, status FROM car WHERE model = ?";
+    private static final String FILTER_CARS_BY_STATUS_AND_MODEL_SQL = "SELECT id, name, model, plate_number, year, status FROM car WHERE status = ? AND model = ?"; // New query
     // Fetch all cars
     public List<Car> getAllCars() {
         List<Car> cars = new ArrayList<>();

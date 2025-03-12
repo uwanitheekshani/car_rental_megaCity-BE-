@@ -104,7 +104,9 @@ public class BookingDAO  {
                         rs.getDouble("total_amount"),
                         rs.getString("status"),
                         rs.getTimestamp("created_at"),
-                        rs.getTimestamp("updated_at")
+                        rs.getTimestamp("updated_at"),
+                        rs.getInt("driver_id")
+
                 ));
             }
         } catch (SQLException e) {

@@ -4,20 +4,47 @@ package org.uwani.mega.megacity.service.impl;
 
 import org.uwani.mega.megacity.dao.PaymentDAO;
 import org.uwani.mega.megacity.dao.PaymentDAOImpl;
+import org.uwani.mega.megacity.dto.BookingDTO;
+import org.uwani.mega.megacity.dto.CarDTO;
+import org.uwani.mega.megacity.entity.Booking;
 import org.uwani.mega.megacity.entity.Payment;
+import org.uwani.mega.megacity.service.BookingService;
+import org.uwani.mega.megacity.service.CarService;
 import org.uwani.mega.megacity.service.PaymentService;
 
 import java.util.List;
 
 public class PaymentServiceImpl implements PaymentService {
     private PaymentDAO paymentDAO = new PaymentDAOImpl();
+    private CarService carService = new CarServiceImpl();
+    private BookingService bookingService = new BookingServiceImpl();
+//    @Override
+//    public void processPayment(Payment payment) {
+//        if (payment.getPaymentAmount() <= 0) {
+//            throw new IllegalArgumentException("Payment amount must be greater than zero.");
+//        }
+//        paymentDAO.createPayment(payment);
+//    }
 
     @Override
     public void processPayment(Payment payment) {
         if (payment.getPaymentAmount() <= 0) {
             throw new IllegalArgumentException("Payment amount must be greater than zero.");
         }
-        paymentDAO.createPayment(payment);
+
+        boolean ispayed = paymentDAO.createPayment(payment);
+        if(ispayed){
+            Booking booking =bookingService.getBookingById(payment.getBookingId());
+            BookingDTO bookingDTO = new BookingDTO();
+            bookingDTO.setStatus("Completed");
+            bookingDTO.setTotalAmount(booking.getTotalAmount());
+            bookingDTO.setStartDate(booking.getStartDate().toString());
+            bookingDTO.setEndDate(booking.getEndDate().toString());
+            bookingService.updateBooking(booking.getId(),bookingDTO);
+            CarDTO carDTO =carService.getCarById(booking.getCarId());
+            carDTO.setStatus("Available");
+            carService.updateCar(carDTO);
+        }
     }
 
     @Override

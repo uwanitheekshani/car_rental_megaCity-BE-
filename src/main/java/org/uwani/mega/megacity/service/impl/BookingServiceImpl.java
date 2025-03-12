@@ -4,9 +4,11 @@ package org.uwani.mega.megacity.service.impl;
 
 import org.uwani.mega.megacity.dao.BookingDAO;
 import org.uwani.mega.megacity.dto.BookingDTO;
+import org.uwani.mega.megacity.dto.CarDTO;
 import org.uwani.mega.megacity.entity.Booking;
 import org.uwani.mega.megacity.entity.User;
 import org.uwani.mega.megacity.service.BookingService;
+import org.uwani.mega.megacity.service.CarService;
 import org.uwani.mega.megacity.service.UserService;
 
 import java.sql.Date;
@@ -18,6 +20,7 @@ import java.util.List;
 public class BookingServiceImpl implements BookingService {
     private BookingDAO bookingDAO = new BookingDAO();
     private UserService userService = new UserServiceImpl();
+    private CarService carService = new CarServiceImpl();
     // Convert DTO to Entity
     // Convert DTO to Entity
     private Booking toEntity(BookingDTO dto) throws ParseException {
@@ -37,13 +40,33 @@ public class BookingServiceImpl implements BookingService {
     }
 
     // CREATE Booking
+//    @Override
+//    public boolean createBooking(BookingDTO bookingDTO) {
+//        try {
+//            User user =userService.getDriverUsers();
+//            bookingDTO.setDriverId(user.getId());
+//            Booking booking = toEntity(bookingDTO);
+//            return bookingDAO.createBooking(booking);
+//        } catch (ParseException | SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+
     @Override
     public boolean createBooking(BookingDTO bookingDTO) {
         try {
             User user =userService.getDriverUsers();
             bookingDTO.setDriverId(user.getId());
             Booking booking = toEntity(bookingDTO);
-            return bookingDAO.createBooking(booking);
+            boolean isBookingCreated = bookingDAO.createBooking(booking);
+            if(isBookingCreated){
+                CarDTO carDTO =carService.getCarById(booking.getCarId());
+                carDTO.setStatus("Unavailable");
+                carService.updateCar(carDTO);
+            }
+            return isBookingCreated;
+
         } catch (ParseException | SQLException e) {
             e.printStackTrace();
             return false;
@@ -85,5 +108,19 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public boolean deleteBooking(int id) {
         return bookingDAO.deleteBooking(id);
+    }
+
+    @Override
+    public boolean updateBookingStatus(int id, String status) {
+        try {
+            Booking existingBooking = bookingDAO.getBookingById(id);
+            if (existingBooking != null) {
+                existingBooking.setStatus(status);
+                return bookingDAO.updateBooking(existingBooking);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
