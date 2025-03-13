@@ -12,4 +12,5 @@ public interface PaymentDAO {
     List<Payment> getAllPayments();
     void updatePayment(Payment payment);
     void deletePayment(int id);
+    Payment createPaymentV2(Payment payment);
 }

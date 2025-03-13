@@ -23,4 +23,5 @@ public interface UserService {
     boolean verifyOtp(String email, String otpCode);
     boolean changePassword(String email, String newPassword);
     User getDriverUsers() throws SQLException;
+    User getUserById(int id ) throws SQLException;
 }

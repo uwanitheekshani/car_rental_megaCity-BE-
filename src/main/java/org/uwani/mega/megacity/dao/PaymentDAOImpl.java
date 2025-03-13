@@ -208,4 +208,64 @@ public class PaymentDAOImpl implements PaymentDAO {
         }
     }
 
+//    @Override
+//    public Payment createPaymentV2(Payment payment) {
+//        return null;
+//    }
+
+    @Override
+    public Payment createPaymentV2(Payment payment) {
+        // Check if the booking_id exists in the bookings table
+        boolean bookingExists = false;
+        try (Connection conn = DBConfig.getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement("SELECT 1 FROM bookings WHERE id = ?")) {
+
+            checkStmt.setInt(1, payment.getBookingId());
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                bookingExists = true; // Booking exists
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error checking booking existence", e); // Throw an exception in case of error
+        }
+
+        if (!bookingExists) {
+            throw new IllegalArgumentException("Invalid booking ID: " + payment.getBookingId());
+        }
+
+        // Proceed with inserting the payment if the booking_id is valid
+        try (Connection conn = DBConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(INSERT_PAYMENT, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setInt(1, payment.getBookingId());
+            stmt.setInt(2, payment.getUserId());
+            stmt.setDouble(3, payment.getPaymentAmount());
+            stmt.setString(4, payment.getCurrency());
+            stmt.setString(5, payment.getPaymentMethod());
+            stmt.setString(6, payment.getPaymentStatus());
+            stmt.setString(7, payment.getTransactionId());
+            stmt.setString(8, payment.getRemarks());
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        payment.setId(generatedKeys.getInt(1)); // Set the generated payment ID
+                    }
+                }
+                return payment; // Return the payment object with the generated ID
+            } else {
+                throw new SQLException("Failed to insert payment, no rows affected.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error inserting payment", e); // Throw an exception if insertion fails
+        }
+    }
+
 }

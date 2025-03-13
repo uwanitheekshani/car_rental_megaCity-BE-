@@ -142,4 +142,13 @@ public class UserServiceImpl implements UserService {
         }
         return null;
     }
+
+    @Override
+    public User getUserById(int id) throws SQLException {
+        User user = userDAO.getUserById(id);
+        if(user !=null){
+            return user;
+        }
+        return null;
+    }
 }
